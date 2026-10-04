@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { ExerciseType, LocalSet } from '../db/types';
 import { deleteSet, updateSet } from '../features/workout/actions';
-import { formatDuration, formatNumber, formatSpeed } from '../lib/format';
+import { formatDuration, formatNumber, formatSpeed, formatWeight } from '../lib/format';
 import { canInc, stepDuration, stepIncline, stepSpeed, stepWeight } from '../lib/steps';
 import { Sheet } from './Sheet';
 import { Stepper } from './Stepper';
@@ -21,6 +21,7 @@ export function SetEditSheet({ set, position, exerciseName, type, onClose }: Pro
   const toast = useToast();
   const [reps, setReps] = useState(set.reps ?? 0);
   const [weight, setWeight] = useState(set.weight_kg ?? 0);
+  const [perHand, setPerHand] = useState(set.per_hand);
   const [duration, setDuration] = useState(set.duration_sec ?? 0);
   const [incline, setIncline] = useState(set.incline_pct);
   const [speed, setSpeed] = useState(set.speed_kmh ?? 0);
@@ -31,7 +32,9 @@ export function SetEditSheet({ set, position, exerciseName, type, onClose }: Pro
   const save = async () => {
     await updateSet(
       set.id,
-      cardio ? { duration_sec: duration, incline_pct: incline, speed_kmh: speed } : { reps, weight_kg: weight },
+      cardio
+        ? { duration_sec: duration, incline_pct: incline, speed_kmh: speed }
+        : { reps, weight_kg: weight, per_hand: perHand },
     );
     onClose();
   };
@@ -82,12 +85,31 @@ export function SetEditSheet({ set, position, exerciseName, type, onClose }: Pro
             />
             <Stepper
               label="Beban"
-              value={`${formatNumber(weight)} kg`}
+              value={formatWeight(weight, perHand)}
               onDec={() => setWeight((w) => stepWeight(w, -1))}
               onInc={() => setWeight((w) => stepWeight(w, 1))}
               canDec={weight > 0}
               canInc={canInc.weight(weight)}
             />
+            <fieldset className="field">
+              <legend className="field__label">Beban dihitung</legend>
+              <div className="choice-grid choice-grid--2">
+                {[
+                  { value: false, label: 'Total' },
+                  { value: true, label: 'Per tangan' },
+                ].map((o) => (
+                  <button
+                    key={o.label}
+                    type="button"
+                    className={perHand === o.value ? 'choice is-active' : 'choice'}
+                    aria-pressed={perHand === o.value}
+                    onClick={() => setPerHand(o.value)}
+                  >
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+            </fieldset>
           </>
         )}
         <button type="button" className="btn btn--primary" disabled={!valid} onClick={() => void save()}>

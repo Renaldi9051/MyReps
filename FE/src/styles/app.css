@@ -1138,6 +1138,14 @@ p {
   gap: 8px;
 }
 
+.choice-grid--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.choice-grid--2 .choice {
+  height: 48px;
+}
+
 .choice {
   height: 42px;
   border: var(--bw) solid var(--line);
