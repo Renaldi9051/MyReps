@@ -6,7 +6,7 @@ import { requestSync } from '../sync/engine';
 
 // Semua perubahan ditulis ke Dexie dulu dengan pending=1, lalu sinkron dijadwalkan.
 
-type SetValues = Pick<WorkoutSet, 'reps' | 'weight_kg' | 'duration_sec' | 'incline_pct' | 'speed_kmh'>;
+type SetValues = Pick<WorkoutSet, 'reps' | 'weight_kg' | 'per_hand' | 'duration_sec' | 'incline_pct' | 'speed_kmh'>;
 
 const live = <T extends { deleted_at: string | null }>(row: T) => row.deleted_at === null;
 

@@ -16,7 +16,7 @@ import { Stepper } from './Stepper';
 import { useToast } from './Toast';
 import { useEndSession } from './useEndSession';
 
-type SetValues = Pick<WorkoutSet, 'reps' | 'weight_kg' | 'duration_sec' | 'incline_pct' | 'speed_kmh'>;
+type SetValues = Pick<WorkoutSet, 'reps' | 'weight_kg' | 'per_hand' | 'duration_sec' | 'incline_pct' | 'speed_kmh'>;
 
 // weight null = belum diubah user
 const EMPTY_DRAFT: { reps: number; weight: number | null } = { reps: 0, weight: null };
@@ -51,7 +51,14 @@ export function StrengthLogger({ exercise }: { exercise: LocalExercise }) {
 
   const askSave = () => {
     if (reps === 0) return;
-    setConfirming({ reps, weight_kg: weight, duration_sec: null, incline_pct: null, speed_kmh: null });
+    setConfirming({
+      reps,
+      weight_kg: weight,
+      per_hand: false,
+      duration_sec: null,
+      incline_pct: null,
+      speed_kmh: null,
+    });
   };
 
   const save = async (values: SetValues) => {

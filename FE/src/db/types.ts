@@ -34,6 +34,8 @@ export type WorkoutSet = SyncFields & {
   set_number: number;
   reps: number | null;
   weight_kg: number | null;
+  // true = weight_kg dipegang di tiap tangan (dumbbell), total beban = 2 × weight_kg
+  per_hand: boolean;
   duration_sec: number | null;
   incline_pct: number | null;
   speed_kmh: number | null;

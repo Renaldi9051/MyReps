@@ -18,6 +18,18 @@ db.version(1).stores({
   meta: 'key',
 });
 
+// Set lama belum punya per_hand
+db.version(2)
+  .stores({})
+  .upgrade((tx) =>
+    tx
+      .table('sets')
+      .toCollection()
+      .modify((s: { per_hand?: boolean }) => {
+        s.per_hand ??= false;
+      }),
+  );
+
 export async function getMeta<T>(key: string): Promise<T | undefined> {
   return (await db.meta.get(key))?.value as T | undefined;
 }

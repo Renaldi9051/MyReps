@@ -17,7 +17,7 @@ import { Stepper } from './Stepper';
 import { useToast } from './Toast';
 import { useEndSession } from './useEndSession';
 
-type SetValues = Pick<WorkoutSet, 'reps' | 'weight_kg' | 'duration_sec' | 'incline_pct' | 'speed_kmh'>;
+type SetValues = Pick<WorkoutSet, 'reps' | 'weight_kg' | 'per_hand' | 'duration_sec' | 'incline_pct' | 'speed_kmh'>;
 
 // Field yang tidak ada = belum diubah user
 const EMPTY_DRAFT: { incline?: number | null; speed?: number } = {};
@@ -50,7 +50,14 @@ export function CardioLogger({ exercise }: { exercise: LocalExercise }) {
 
   const setNumber = visitSets.length + 1;
   const elapsedSec = Math.floor(stopwatch.elapsedMs / 1000);
-  const current = { reps: null, weight_kg: null, duration_sec: elapsedSec, incline_pct: incline, speed_kmh: speed };
+  const current = {
+    reps: null,
+    weight_kg: null,
+    per_hand: false,
+    duration_sec: elapsedSec,
+    incline_pct: incline,
+    speed_kmh: speed,
+  };
 
   const askSave = () => {
     if (elapsedSec < 1) return;
