@@ -1008,7 +1008,7 @@ p {
 
 /* Judul bulan/tahun dipasang ulang (key) tiap ganti periode, jadi ikut memudar masuk */
 .heat-title {
-  animation: heat-fade-in 220ms ease-out;
+  animation: fade-in 220ms ease-out;
 }
 
 .heat-scroll {
@@ -1236,12 +1236,6 @@ button.heat-cell:active {
   from {
     opacity: 0;
     scale: 0.94;
-  }
-}
-
-@keyframes heat-fade-in {
-  from {
-    opacity: 0;
   }
 }
 
@@ -1489,7 +1483,7 @@ button.heat-cell:active {
   border-top: var(--bw) solid var(--ink);
   border-radius: var(--r-xl) var(--r-xl) 0 0;
   background: var(--bg);
-  animation: sheet-in 160ms ease-out;
+  animation: sheet-in 220ms cubic-bezier(0.2, 0.8, 0.3, 1);
 }
 
 .sheet--tall {
@@ -1754,7 +1748,7 @@ button.heat-cell:active {
 
 @keyframes sheet-in {
   from {
-    transform: translateY(24px);
+    transform: translateY(32px);
     opacity: 0;
   }
 }
@@ -1808,6 +1802,43 @@ button.heat-cell:active {
   display: grid;
   place-items: center;
   min-height: 100dvh;
+}
+
+/* ---------- Animasi ----------
+   Ringan: hanya opacity, scale, translate (jalan di compositor), durasi 180–320ms.
+   Semuanya mati lewat aturan prefers-reduced-motion di bawah. */
+
+/* Ganti halaman: isi memudar dan naik sedikit; header dan nav tetap diam */
+.screen__body {
+  animation: page-in 240ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.sheet-backdrop {
+  animation: fade-in 180ms ease-out;
+}
+
+.toast {
+  animation: drop-in 220ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
