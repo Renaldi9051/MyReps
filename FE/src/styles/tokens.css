@@ -15,6 +15,12 @@
   --on-accent: #111111; /* teks di atas --accent, tetap gelap di kedua tema */
   --on-ink: #ffffff; /* teks dan ikon di atas --ink */
   --backdrop: rgba(17, 17, 17, 0.4); /* tambahan: latar di belakang sheet */
+  /* Heatmap aktivitas: campuran --ink ke --bg, ikut berbalik di mode gelap (makin banyak = makin terang) */
+  --heat-0: var(--line-soft);
+  --heat-1: color-mix(in srgb, var(--ink) 25%, var(--bg));
+  --heat-2: color-mix(in srgb, var(--ink) 45%, var(--bg));
+  --heat-3: color-mix(in srgb, var(--ink) 70%, var(--bg));
+  --heat-4: var(--ink);
   color-scheme: light;
 
   /* Font */
