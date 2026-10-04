@@ -212,6 +212,46 @@ export function useWeekGroupSessions(): Map<MuscleGroup, number> | undefined {
   });
 }
 
+export type ActivityGroup = { exercise: LocalExercise; sets: LocalSet[] };
+
+// Heatmap aktivitas di Progres: latihan per tanggal dalam satu tahun, urut dikerjakan.
+// Hasil ditandai year supaya hasil tahun lama tidak dipakai saat pindah tahun.
+export function useYearActivity(
+  year: number,
+): { year: number; days: Map<string, ActivityGroup[]> } | undefined {
+  return useLiveQuery(async () => {
+    const sessions = await db.sessions
+      .where('date')
+      .between(`${year}-01-01`, `${year}-12-31`, true, true)
+      .filter(live)
+      .toArray();
+    const dateOf = new Map(sessions.map((s) => [s.id, s.date]));
+    const sets = (await db.sets.where('session_id').anyOf([...dateOf.keys()]).filter(live).toArray()).sort(byCreated);
+    const exercises = await db.exercises.bulkGet([...new Set(sets.map((s) => s.exercise_id))]);
+    const exById = new Map(exercises.filter((e) => e !== undefined).map((e) => [e.id, e]));
+    const days = new Map<string, ActivityGroup[]>();
+    for (const s of sets) {
+      const date = dateOf.get(s.session_id);
+      const exercise = exById.get(s.exercise_id);
+      if (!date || !exercise) continue;
+      const groups = days.get(date) ?? [];
+      const group = groups.find((g) => g.exercise.id === exercise.id);
+      if (group) group.sets.push(s);
+      else groups.push({ exercise, sets: [s] });
+      days.set(date, groups);
+    }
+    return { year, days };
+  }, [year]);
+}
+
+// Tahun paling awal yang punya sesi (batas mundur heatmap)
+export function useFirstActivityYear(): number | null | undefined {
+  return useLiveQuery(async () => {
+    const first = await db.sessions.orderBy('date').filter(live).first();
+    return first ? Number(first.date.slice(0, 4)) : null;
+  });
+}
+
 export type WeekPoint = { label: string; value: number | null };
 
 // Grafik Progres (DESIGN §5.13): 6 minggu terakhir (M1..M6, M6 = minggu ini).
