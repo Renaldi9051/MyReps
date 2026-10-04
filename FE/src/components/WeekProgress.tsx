@@ -47,6 +47,7 @@ export function ProgressRings({ counts }: Props) {
               <circle cx="44" cy="44" r={R} fill="none" strokeWidth="8" style={{ stroke: 'var(--line-soft)' }} />
               {ratio > 0 && (
                 <circle
+                  className="ring-arc"
                   cx="44"
                   cy="44"
                   r={R}

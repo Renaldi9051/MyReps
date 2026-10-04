@@ -1845,6 +1845,12 @@ button.heat-cell:active {
   animation-delay: 180ms;
 }
 
+/* Cincin progres: busur tergambar dari atas, dan bergeser halus saat jumlah sesi berubah */
+.ring-arc {
+  animation: ring-draw 600ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+  transition: stroke-dasharray 400ms ease-out;
+}
+
 @keyframes page-in {
   from {
     opacity: 0;
@@ -1876,6 +1882,12 @@ button.heat-cell:active {
   from {
     opacity: 0;
     scale: 0.3 1;
+  }
+}
+
+@keyframes ring-draw {
+  from {
+    stroke-dasharray: 0 227;
   }
 }
 
