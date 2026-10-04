@@ -5,7 +5,7 @@ import { addSet } from '../features/workout/actions';
 import { useDraft } from '../features/workout/draft';
 import { useExerciseSetCount, useLastSet, useTodaySets } from '../features/workout/queries';
 import { haptic, useWakeLock } from '../lib/device';
-import { formatNumber, formatSet } from '../lib/format';
+import { formatSet, formatWeight } from '../lib/format';
 import { nowIso } from '../lib/time';
 import { canInc, stepWeight } from '../lib/steps';
 import { AppHeader } from './AppHeader';
@@ -18,8 +18,12 @@ import { useEndSession } from './useEndSession';
 
 type SetValues = Pick<WorkoutSet, 'reps' | 'weight_kg' | 'per_hand' | 'duration_sec' | 'incline_pct' | 'speed_kmh'>;
 
-// weight null = belum diubah user
-const EMPTY_DRAFT: { reps: number; weight: number | null } = { reps: 0, weight: null };
+// weight/perHand null = belum diubah user
+const EMPTY_DRAFT: { reps: number; weight: number | null; perHand: boolean | null } = {
+  reps: 0,
+  weight: null,
+  perHand: null,
+};
 
 // Penghitung rep (DESIGN §6.3, PRD F2 & F3.1). Set berikutnya cukup: +1 beberapa kali, lalu Simpan set.
 export function StrengthLogger({ exercise }: { exercise: LocalExercise }) {
@@ -39,6 +43,8 @@ export function StrengthLogger({ exercise }: { exercise: LocalExercise }) {
   // F2.4: beban awal = beban set sebelumnya di latihan ini, 0 kalau belum ada
   const weight = draft.weight ?? lastSet?.weight_kg ?? 0;
   const stepDraftWeight = (dir: 1 | -1) => setDraft((d) => ({ ...d, weight: stepWeight(d.weight ?? weight, dir) }));
+  // Beban per tangan (dumbbell): ikut set sebelumnya di latihan ini
+  const perHand = draft.perHand ?? lastSet?.per_hand ?? false;
 
   // Nilai yang dibekukan saat tombol Simpan ditekan, menunggu konfirmasi
   const [confirming, setConfirming] = useState<SetValues | null>(null);
@@ -54,7 +60,7 @@ export function StrengthLogger({ exercise }: { exercise: LocalExercise }) {
     setConfirming({
       reps,
       weight_kg: weight,
-      per_hand: false,
+      per_hand: perHand,
       duration_sec: null,
       incline_pct: null,
       speed_kmh: null,
@@ -67,7 +73,7 @@ export function StrengthLogger({ exercise }: { exercise: LocalExercise }) {
     haptic(20);
     toast({ message: `Set ${setNumber} tersimpan · ${formatSet(set)}`, durationMs: 3000 });
     // Beban tetap sama untuk set berikutnya
-    setDraft({ reps: 0, weight: values.weight_kg });
+    setDraft({ reps: 0, weight: values.weight_kg, perHand: values.per_hand });
   };
 
   return (
@@ -119,19 +125,31 @@ export function StrengthLogger({ exercise }: { exercise: LocalExercise }) {
             >
               +1
             </button>
-            <span className="round-spacer" aria-hidden="true" />
+            <button
+              type="button"
+              className="round round--minus round--time round--hand"
+              aria-label="Beban per tangan"
+              aria-pressed={perHand}
+              onClick={() => {
+                setDraft((d) => ({ ...d, perHand: !perHand }));
+                haptic(10);
+              }}
+            >
+              ×2
+              <small>tangan</small>
+            </button>
           </div>
 
           <Stepper
             label="Beban"
-            value={`${formatNumber(weight)} kg`}
+            value={formatWeight(weight, perHand)}
             onDec={() => stepDraftWeight(-1)}
             onInc={() => stepDraftWeight(1)}
             canDec={weight > 0}
             canInc={canInc.weight(weight)}
           />
 
-          <SetRows sets={visitSets} running={`${reps} × ${formatNumber(weight)} kg`} />
+          <SetRows sets={visitSets} running={`${reps} × ${formatWeight(weight, perHand)}`} />
 
           <button type="button" className="btn btn--primary" disabled={reps === 0} onClick={askSave}>
             Simpan set
