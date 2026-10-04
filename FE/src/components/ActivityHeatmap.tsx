@@ -235,8 +235,16 @@ export function ActivityHeatmap() {
               <ul className="heat-pop__list">
                 {groups.map((g) => (
                   <li key={g.exercise.id}>
-                    <span>{g.exercise.name}</span>
-                    <span className="num">{formatGroupSummary(g.sets)}</span>
+                    {/* PRD F4.3: tap nama latihan untuk semua catatannya */}
+                    <Link
+                      to={`/progres/latihan/${g.exercise.id}`}
+                      className="heat-pop__ex"
+                      aria-label={`${g.exercise.name}, ${formatGroupSummary(g.sets)}. Lihat semua catatan`}
+                    >
+                      <span className="heat-pop__name">{g.exercise.name}</span>
+                      <span className="heat-pop__sum num">{formatGroupSummary(g.sets)}</span>
+                      <ChevronRight size={14} strokeWidth={1.75} aria-hidden />
+                    </Link>
                   </li>
                 ))}
               </ul>

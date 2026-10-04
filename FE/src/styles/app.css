@@ -1155,25 +1155,39 @@ button.heat-cell:active {
 .heat-pop__list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin: 10px 0 0;
+  margin: 4px 0 0;
   padding: 0;
   list-style: none;
   font-size: 14px;
 }
 
-.heat-pop__list li {
+/* Baris latihan di pop up: tap untuk semua catatan latihan itu (PRD F4.3) */
+.heat-pop__ex {
   display: flex;
-  justify-content: space-between;
-  gap: 10px;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform 80ms ease-out;
 }
 
-.heat-pop__list li span:first-child {
+.heat-pop__ex:active {
+  transform: scale(0.97);
+}
+
+.heat-pop__name {
+  flex: 1;
   min-width: 0;
   overflow-wrap: anywhere;
 }
 
-.heat-pop__list li span:last-child {
+.heat-pop__sum {
+  flex-shrink: 0;
+  color: var(--ink-muted);
+}
+
+.heat-pop__ex svg {
   flex-shrink: 0;
   color: var(--ink-muted);
 }

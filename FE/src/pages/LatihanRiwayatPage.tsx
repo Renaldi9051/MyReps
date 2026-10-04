@@ -6,7 +6,7 @@ import type { LocalSet } from '../db/types';
 import { useExercise, useExerciseHistory } from '../features/workout/queries';
 import { formatDateLabel, formatSetCompact } from '../lib/format';
 
-// PRD F4.3: semua set satu latihan, per tanggal (dibuka dari Progres "Lihat semua catatan")
+// PRD F4.3: semua set satu latihan, per tanggal (dibuka dari nama latihan di pop up heatmap Progres)
 export function LatihanRiwayatPage() {
   const { exerciseId } = useParams();
   const exercise = useExercise(exerciseId);
