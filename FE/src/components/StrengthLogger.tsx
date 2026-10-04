@@ -43,7 +43,7 @@ export function StrengthLogger({ exercise }: { exercise: LocalExercise }) {
   // F2.4: beban awal = beban set sebelumnya di latihan ini, 0 kalau belum ada
   const weight = draft.weight ?? lastSet?.weight_kg ?? 0;
   const stepDraftWeight = (dir: 1 | -1) => setDraft((d) => ({ ...d, weight: stepWeight(d.weight ?? weight, dir) }));
-  // Beban per tangan (dumbbell): ikut set sebelumnya di latihan ini
+  // Pisah beban kiri + kanan (dumbbell): ikut set sebelumnya di latihan ini
   const perHand = draft.perHand ?? lastSet?.per_hand ?? false;
 
   // Nilai yang dibekukan saat tombol Simpan ditekan, menunggu konfirmasi
@@ -128,15 +128,15 @@ export function StrengthLogger({ exercise }: { exercise: LocalExercise }) {
             <button
               type="button"
               className="round round--minus round--time round--hand"
-              aria-label="Beban per tangan"
+              aria-label="Pisah beban kiri dan kanan"
               aria-pressed={perHand}
               onClick={() => {
                 setDraft((d) => ({ ...d, perHand: !perHand }));
                 haptic(10);
               }}
             >
-              ×2
-              <small>tangan</small>
+              Pisah
+              <small>beban</small>
             </button>
           </div>
 

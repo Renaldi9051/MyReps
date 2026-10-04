@@ -297,7 +297,11 @@ p {
   color: var(--ink-muted);
 }
 
-/* Toggle beban per tangan di slot kanan tombol +1 (latihan beban) */
+/* Toggle pisah beban (kiri + kanan) di slot kanan tombol +1 (latihan beban) */
+.round--hand {
+  font-size: 16px;
+}
+
 .round--hand[aria-pressed='true'] {
   background: var(--ink);
   color: var(--on-ink);
