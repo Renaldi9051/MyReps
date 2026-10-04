@@ -205,11 +205,17 @@ p {
 .set-row,
 .set-chip,
 .date-box,
-.nav-item {
-  transition: transform 80ms ease-out;
+.nav-item,
+.choice {
+  /* Tekan 80ms; ganti status (terpilih, aktif, terbuka) memudar 180ms */
+  transition:
+    transform 80ms ease-out,
+    background-color 180ms ease-out,
+    border-color 180ms ease-out,
+    color 180ms ease-out;
 }
 
-:is(.btn, .round, .icon-circle, .text-btn, .tile, .ex-row, .set-row, .set-chip, .date-box, .nav-item):active {
+:is(.btn, .round, .icon-circle, .text-btn, .tile, .ex-row, .set-row, .set-chip, .date-box, .nav-item, .choice):active {
   transform: scale(0.96);
 }
 
@@ -998,15 +1004,6 @@ p {
   height: 40px;
   padding: 0 16px;
   font-size: 14px;
-  transition:
-    background-color 180ms ease-out,
-    border-color 180ms ease-out,
-    color 180ms ease-out,
-    transform 80ms ease-out;
-}
-
-.heat-toggle .choice:active {
-  transform: scale(0.96);
 }
 
 /* Judul bulan/tahun dipasang ulang (key) tiap ganti periode, jadi ikut memudar masuk */
@@ -1622,7 +1619,10 @@ button.heat-cell:active {
   font-family: var(--font-number);
   font-size: 18px;
   font-weight: 600;
-  transition: transform 80ms ease-out;
+  transition:
+    transform 80ms ease-out,
+    background-color 180ms ease-out,
+    color 180ms ease-out;
 }
 
 .cal-day.is-today {
