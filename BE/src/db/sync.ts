@@ -134,6 +134,7 @@ async function pushSets(tx: Tx, userId: string, rows: PushBody['sets']) {
         set_number: excluded(workoutSet.set_number),
         reps: excluded(workoutSet.reps),
         weight_kg: excluded(workoutSet.weight_kg),
+        per_hand: excluded(workoutSet.per_hand),
         duration_sec: excluded(workoutSet.duration_sec),
         incline_pct: excluded(workoutSet.incline_pct),
         speed_kmh: excluded(workoutSet.speed_kmh),

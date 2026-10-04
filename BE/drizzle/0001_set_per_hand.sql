@@ -1,0 +1,1 @@
+ALTER TABLE "workout_set" ADD COLUMN "per_hand" boolean DEFAULT false NOT NULL;

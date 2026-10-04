@@ -38,6 +38,8 @@ export const setInput = z
     set_number: z.number().int().min(1),
     reps: z.number().int().min(0).nullable(),
     weight_kg: z.number().min(0).max(9999).multipleOf(2.5).nullable(),
+    // Klien lama belum mengirim field ini
+    per_hand: z.boolean().default(false),
     duration_sec: z.number().int().min(0).nullable(),
     incline_pct: z.number().min(0).max(999).multipleOf(0.5).nullable(),
     speed_kmh: z.number().min(0).max(999).multipleOf(0.1).nullable(),

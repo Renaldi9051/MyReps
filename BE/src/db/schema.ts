@@ -165,6 +165,8 @@ export const workoutSet = pgTable(
     // Latihan beban
     reps: integer('reps'),
     weight_kg: numeric('weight_kg', { precision: 6, scale: 2, mode: 'number' }),
+    // true = weight_kg dipegang di tiap tangan (mis. dumbbell 5 kg kiri + 5 kg kanan)
+    per_hand: boolean('per_hand').notNull().default(false),
     // Kardio
     duration_sec: integer('duration_sec'),
     incline_pct: numeric('incline_pct', { precision: 4, scale: 1, mode: 'number' }),
