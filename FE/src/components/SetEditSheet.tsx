@@ -92,11 +92,11 @@ export function SetEditSheet({ set, position, exerciseName, type, onClose }: Pro
               canInc={canInc.weight(weight)}
             />
             <fieldset className="field">
-              <legend className="field__label">Beban dihitung</legend>
+              <legend className="field__label">Beban kiri dan kanan</legend>
               <div className="choice-grid choice-grid--2">
                 {[
-                  { value: false, label: 'Total' },
-                  { value: true, label: 'Per tangan' },
+                  { value: false, label: 'Satu beban' },
+                  { value: true, label: 'Pisah beban' },
                 ].map((o) => (
                   <button
                     key={o.label}

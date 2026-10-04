@@ -51,11 +51,11 @@ export function formatDateLabel(date: string): string {
 
 type SetValues = Pick<WorkoutSet, 'reps' | 'weight_kg' | 'per_hand' | 'duration_sec' | 'incline_pct' | 'speed_kmh'>;
 
-// Beban per tangan ditandai di belakang angkanya: "5 kg/tangan"
+// Pisah beban (kiri + kanan) ditulis dua kali: "5 + 5 kg"
 export const formatWeight = (kg: number, perHand: boolean): string =>
-  `${formatNumber(kg)} kg${perHand ? '/tangan' : ''}`;
+  perHand ? `${formatNumber(kg)} + ${formatNumber(kg)} kg` : `${formatNumber(kg)} kg`;
 
-// DESIGN.md §3: "10 × 40 kg", "10 × 5 kg/tangan", atau "20 mnt · 6% · 6,5 km/j"
+// DESIGN.md §3: "10 × 40 kg", "10 × 5 + 5 kg", atau "20 mnt · 6% · 6,5 km/j"
 export function formatSet(set: SetValues): string {
   if (set.duration_sec !== null) {
     const parts = [formatMinutes(set.duration_sec)];
@@ -66,10 +66,11 @@ export function formatSet(set: SetValues): string {
   return `${set.reps ?? 0} × ${formatWeight(set.weight_kg ?? 0, set.per_hand)}`;
 }
 
-// Chip set: "10 × 40", "10 × 5/tangan", atau "20 mnt"
+// Chip set: "10 × 40", "10 × 5+5", atau "20 mnt"
 export function formatSetCompact(set: SetValues): string {
   if (set.duration_sec !== null) return formatMinutes(set.duration_sec);
-  return `${set.reps ?? 0} × ${formatNumber(set.weight_kg ?? 0)}${set.per_hand ? '/tangan' : ''}`;
+  const kg = formatNumber(set.weight_kg ?? 0);
+  return `${set.reps ?? 0} × ${set.per_hand ? `${kg}+${kg}` : kg}`;
 }
 
 // Ringkasan baris latihan di riwayat: "3 set" atau "20 mnt · 6%"
