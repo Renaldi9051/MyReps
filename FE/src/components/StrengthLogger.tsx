@@ -95,7 +95,9 @@ export function StrengthLogger({ exercise }: { exercise: LocalExercise }) {
 
         <div className="counter__ring-area">
           <div className="ring" aria-live="polite" aria-label={`${reps} rep`}>
-            <span className="ring__value">{reps}</span>
+            <span key={reps} className="ring__value">
+              {reps}
+            </span>
             <span className="ring__label">rep</span>
           </div>
         </div>
