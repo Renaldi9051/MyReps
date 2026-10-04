@@ -1012,6 +1012,221 @@ p {
   text-align: center;
 }
 
+/* Heatmap aktivitas: kolom = minggu, baris = hari (gaya grafik kontribusi GitHub) */
+.heat {
+  position: relative;
+}
+
+.heat-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 16px 0 12px;
+}
+
+.heat-toggle {
+  display: flex;
+  gap: 6px;
+}
+
+.heat-toggle .choice {
+  height: 40px;
+  padding: 0 16px;
+  font-size: 14px;
+}
+
+.heat-scroll {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.heat-grid {
+  --cell: 40px;
+  --gap: 4px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: 14px repeat(7, var(--cell));
+  grid-template-columns: auto;
+  grid-auto-columns: var(--cell);
+  gap: var(--gap);
+  width: max-content;
+  margin: 0 auto;
+}
+
+.heat-grid--year {
+  --cell: 14px;
+  --gap: 3px;
+  margin: 0;
+}
+
+.heat-grid__top {
+  align-self: end;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--ink-muted);
+  white-space: nowrap;
+}
+
+.heat-grid__day {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  padding-right: 6px;
+  background: var(--bg);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  color: var(--ink-muted);
+}
+
+.heat-grid--year .heat-grid__day {
+  font-size: 10px;
+}
+
+.heat-cell {
+  width: var(--cell);
+  height: var(--cell);
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: var(--heat-0);
+  transition: transform 80ms ease-out;
+}
+
+.heat-grid--year .heat-cell {
+  border-radius: 3px;
+}
+
+button.heat-cell:active {
+  transform: scale(0.9);
+}
+
+.heat-cell.is-open {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
+.heat-cell.is-future {
+  border: var(--bw) dashed var(--line-dashed);
+  background: transparent;
+}
+
+.heat-cell.is-blank {
+  visibility: hidden;
+}
+
+:is(.heat-cell, .heat-legend__box)[data-level='1'] {
+  background: var(--heat-1);
+}
+
+:is(.heat-cell, .heat-legend__box)[data-level='2'] {
+  background: var(--heat-2);
+}
+
+:is(.heat-cell, .heat-legend__box)[data-level='3'] {
+  background: var(--heat-3);
+}
+
+:is(.heat-cell, .heat-legend__box)[data-level='4'] {
+  background: var(--heat-4);
+}
+
+.heat-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+
+.heat-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.heat-legend__box {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  background: var(--heat-0);
+}
+
+.heat-legend__box:first-of-type {
+  margin-left: 2px;
+}
+
+.heat-legend__box:last-of-type {
+  margin-right: 2px;
+}
+
+/* Pop up kecil isi hari yang di-tap; lebar sama dengan POPUP_W di ActivityHeatmap.tsx */
+.heat-pop {
+  position: absolute;
+  z-index: 5;
+  width: 232px;
+  padding: 12px 14px 8px;
+  border: var(--bw) solid var(--ink);
+  border-radius: var(--r-md);
+  background: var(--bg);
+}
+
+.heat-pop--above {
+  transform: translateY(-100%);
+}
+
+.heat-pop__date {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.heat-pop__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+}
+
+.heat-pop__list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.heat-pop__list li span:first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.heat-pop__list li span:last-child {
+  flex-shrink: 0;
+  color: var(--ink-muted);
+}
+
+.heat-pop__empty {
+  margin: 6px 0 4px;
+  font-size: 14px;
+  color: var(--ink-muted);
+}
+
+.heat-pop__link {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 4px;
+  padding: 0;
+}
+
 .rings {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -1592,6 +1807,10 @@ p {
 .progres-title,
 .progres-week {
   margin-top: 24px;
+}
+
+.progres-trend {
+  margin-top: 28px;
 }
 
 .chart-link {

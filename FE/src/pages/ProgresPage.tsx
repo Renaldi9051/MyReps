@@ -1,13 +1,14 @@
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
+import { ActivityHeatmap } from '../components/ActivityHeatmap';
 import { AppHeader } from '../components/AppHeader';
 import { LineChart } from '../components/LineChart';
 import { Sheet } from '../components/Sheet';
 import { ProgressRings } from '../components/WeekProgress';
 import { useExerciseUsage, useExercises, useWeekGroupSessions, useWeeklyTrend } from '../features/workout/queries';
 
-// Progres (DESIGN §6.5): grafik 6 minggu untuk satu latihan + cincin sesi minggu ini
+// Progres (DESIGN §6.5): heatmap aktivitas, grafik 6 minggu untuk satu latihan, cincin sesi minggu ini
 export function ProgresPage() {
   const exercises = useExercises();
   const usage = useExerciseUsage();
@@ -28,10 +29,11 @@ export function ProgresPage() {
       <AppHeader label="Progres" />
       <main className="screen__body">
         <h2 className="section-rule progres-title">Statistik</h2>
+        <ActivityHeatmap />
 
         {exercise ? (
           <>
-            <div className="chart-head">
+            <div className="chart-head progres-trend">
               <button type="button" className="chart-picker" onClick={() => setPicking(true)}>
                 {exercise.name}
                 <ChevronDown size={16} strokeWidth={1.75} />
