@@ -1861,6 +1861,16 @@ button.heat-cell:active {
   animation: rise-in 220ms cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
+/* Riwayat: ganti tanggal memudarkan isi hari itu (key = tanggal), detail set turun saat dibuka */
+.day-summary,
+.ex-list {
+  animation: fade-in 220ms ease-out;
+}
+
+.set-list {
+  animation: drop-in 200ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
 @keyframes page-in {
   from {
     opacity: 0;

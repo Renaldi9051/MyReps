@@ -110,11 +110,11 @@ export function RiwayatPage() {
           )}
         </div>
 
-        {summary && <DaySummaryCard summary={summary} />}
+        {summary && <DaySummaryCard key={`ringkasan-${selected}`} summary={summary} />}
 
         {day && groups.length === 0 && <p className="empty">Belum ada latihan.</p>}
 
-        <ul className="ex-list">
+        <ul key={`daftar-${selected}`} className="ex-list">
           {groups.map((g) => {
             const key = `${g.sessionId}|${g.exercise.id}`;
             const open = openKey === key;
