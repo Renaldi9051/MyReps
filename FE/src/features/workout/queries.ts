@@ -10,6 +10,8 @@ import { addDays, localDate, startOfWeek } from '../../lib/time';
 const live = <T extends { deleted_at: string | null }>(row: T) => row.deleted_at === null;
 const byCreated = (a: { created_at: string }, b: { created_at: string }) =>
   a.created_at.localeCompare(b.created_at);
+// Beban yang benar-benar diangkat: beban per tangan dihitung dua kali
+const totalWeight = (s: LocalSet) => (s.weight_kg ?? 0) * (s.per_hand ? 2 : 1);
 
 export type Usage = { count: number; lastAt: string };
 
@@ -131,7 +133,7 @@ export type DayRecord = { exercise: LocalExercise; weightKg: number; previousKg:
 
 export type DaySummary = {
   reps: number;
-  volumeKg: number; // jumlah rep × beban dari semua set beban
+  volumeKg: number; // jumlah rep × beban dari semua set beban (per tangan dihitung dua kali)
   cardioSec: number;
   durationSec: number; // dari set pertama sampai set terakhir di hari itu
   records: DayRecord[];
@@ -148,7 +150,7 @@ export function useDaySummary(groups: DayGroup[] | undefined, date: string): Day
       if (s.duration_sec !== null) summary.cardioSec += s.duration_sec;
       else {
         summary.reps += s.reps ?? 0;
-        summary.volumeKg += (s.reps ?? 0) * (s.weight_kg ?? 0);
+        summary.volumeKg += (s.reps ?? 0) * totalWeight(s);
       }
     }
     const times = sets.map((s) => Date.parse(s.created_at));
@@ -157,7 +159,7 @@ export function useDaySummary(groups: DayGroup[] | undefined, date: string): Day
     const strength = new Map<string, { exercise: LocalExercise; weightKg: number }>();
     for (const g of groups) {
       if (g.exercise.type !== 'beban') continue;
-      const max = Math.max(...g.sets.map((s) => s.weight_kg ?? 0));
+      const max = Math.max(...g.sets.map(totalWeight));
       const prev = strength.get(g.exercise.id);
       if (!prev || max > prev.weightKg) strength.set(g.exercise.id, { exercise: g.exercise, weightKg: max });
     }
@@ -174,7 +176,7 @@ export function useDaySummary(groups: DayGroup[] | undefined, date: string): Day
       );
       const before = history.filter((s) => earlier.has(s.session_id));
       if (before.length === 0) continue;
-      const previousKg = Math.max(...before.map((s) => s.weight_kg ?? 0));
+      const previousKg = Math.max(...before.map(totalWeight));
       if (weightKg > previousKg) summary.records.push({ exercise, weightKg, previousKg });
     }
     return summary;
@@ -213,7 +215,7 @@ export function useWeekGroupSessions(): Map<MuscleGroup, number> | undefined {
 export type WeekPoint = { label: string; value: number | null };
 
 // Grafik Progres (DESIGN §5.13): 6 minggu terakhir (M1..M6, M6 = minggu ini).
-// Beban: beban tertinggi per minggu (kg). Kardio: total menit per minggu.
+// Beban: beban tertinggi per minggu (kg, per tangan dihitung dua kali). Kardio: total menit per minggu.
 // Hasil ditandai exerciseId: saat ganti latihan, hasil lama tidak dipakai untuk latihan baru.
 export function useWeeklyTrend(
   exercise: LocalExercise | null | undefined,
@@ -237,7 +239,7 @@ export function useWeeklyTrend(
       if (!date) continue;
       const week = starts.findIndex((start, i) => date >= start && (i === 5 || date < starts[i + 1]!));
       if (week < 0) continue;
-      const v = cardio ? (s.duration_sec ?? 0) / 60 : (s.weight_kg ?? 0);
+      const v = cardio ? (s.duration_sec ?? 0) / 60 : totalWeight(s);
       const prev = values[week];
       values[week] = cardio ? (prev ?? 0) + v : Math.max(prev ?? 0, v);
     }
