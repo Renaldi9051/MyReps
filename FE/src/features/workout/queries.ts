@@ -252,45 +252,6 @@ export function useFirstActivityYear(): number | null | undefined {
   });
 }
 
-export type WeekPoint = { label: string; value: number | null };
-
-// Grafik Progres (DESIGN §5.13): 6 minggu terakhir (M1..M6, M6 = minggu ini).
-// Beban: beban tertinggi per minggu (kg, per tangan dihitung dua kali). Kardio: total menit per minggu.
-// Hasil ditandai exerciseId: saat ganti latihan, hasil lama tidak dipakai untuk latihan baru.
-export function useWeeklyTrend(
-  exercise: LocalExercise | null | undefined,
-): { exerciseId: string; points: WeekPoint[] } | undefined {
-  const id = exercise?.id;
-  const cardio = exercise?.type === 'kardio';
-  return useLiveQuery(async () => {
-    if (!id) return undefined;
-    const thisWeek = startOfWeek(localDate());
-    const starts = Array.from({ length: 6 }, (_, i) => addDays(thisWeek, (i - 5) * 7));
-    const sets = await db.sets
-      .where('[exercise_id+created_at]')
-      .between([id, Dexie.minKey], [id, Dexie.maxKey])
-      .filter(live)
-      .toArray();
-    const sessions = await db.sessions.bulkGet([...new Set(sets.map((s) => s.session_id))]);
-    const dateOf = new Map(sessions.filter((s) => s !== undefined).map((s) => [s!.id, s!.date]));
-    const values = starts.map(() => null as number | null);
-    for (const s of sets) {
-      const date = dateOf.get(s.session_id);
-      if (!date) continue;
-      const week = starts.findIndex((start, i) => date >= start && (i === 5 || date < starts[i + 1]!));
-      if (week < 0) continue;
-      const v = cardio ? (s.duration_sec ?? 0) / 60 : totalWeight(s);
-      const prev = values[week];
-      values[week] = cardio ? (prev ?? 0) + v : Math.max(prev ?? 0, v);
-    }
-    const points = values.map((value, i) => ({
-      label: `M${i + 1}`,
-      value: value === null ? null : Math.round(value * 10) / 10,
-    }));
-    return { exerciseId: id, points };
-  }, [id, cardio]);
-}
-
 export type DateGroup = { date: string; sets: LocalSet[] };
 
 // F4.3: semua set untuk satu latihan, dikelompokkan per tanggal (terbaru di atas)

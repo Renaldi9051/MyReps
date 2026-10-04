@@ -968,48 +968,12 @@ p {
   font-variant-numeric: tabular-nums;
 }
 
-/* ---------- Progres (§5.13–5.14) ---------- */
-
-.chart-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 16px 0 8px;
-}
-
-.chart-picker {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  min-height: 40px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  font-size: 15px;
-  font-weight: 600;
-}
+/* ---------- Progres (§5.14, heatmap §9) ---------- */
 
 .chart {
   padding: 12px;
   border: var(--bw) solid var(--line);
   border-radius: var(--r-lg);
-}
-
-.chart svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  overflow: visible;
-}
-
-.chart__empty {
-  display: grid;
-  place-items: center;
-  min-height: 150px;
-  font-size: 14px;
-  color: var(--ink-muted);
-  text-align: center;
 }
 
 /* Heatmap aktivitas: kolom = minggu, baris = hari (gaya grafik kontribusi GitHub) */
@@ -1807,15 +1771,6 @@ button.heat-cell:active {
 .progres-title,
 .progres-week {
   margin-top: 24px;
-}
-
-.progres-trend {
-  margin-top: 28px;
-}
-
-.chart-link {
-  align-self: flex-end;
-  margin-top: 4px;
 }
 
 .theme-choice {
