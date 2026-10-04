@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type MouseEvent } from 'react';
 import { Link } from 'react-router';
 import { useFirstActivityYear, useYearActivity, type ActivityGroup } from '../features/workout/queries';
 import { formatGroupSummary, formatLongDate, formatMonthYear } from '../lib/format';
@@ -38,6 +38,8 @@ export function ActivityHeatmap() {
   const [year, setYear] = useState(thisYear);
   const [month, setMonth] = useState(now.getMonth());
   const [popup, setPopup] = useState<Popup | null>(null);
+  // Arah pindah periode: kolom muncul berurutan dari kiri (maju) atau dari kanan (mundur)
+  const [dir, setDir] = useState<1 | -1>(1);
   const wrapRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const popRef = useRef<HTMLDivElement>(null);
@@ -59,6 +61,7 @@ export function ActivityHeatmap() {
 
   const shift = (delta: 1 | -1) => {
     setPopup(null);
+    setDir(delta);
     if (yearly) {
       setYear(year + delta);
       return;
@@ -70,6 +73,7 @@ export function ActivityHeatmap() {
 
   const changeView = (next: View) => {
     setPopup(null);
+    setDir(1);
     setView(next);
     // Dari tampilan tahun ini kembali ke bulan: jangan sampai bulan yang belum datang
     if (next === 'bulan' && year === thisYear && month > now.getMonth()) setMonth(now.getMonth());
@@ -158,7 +162,9 @@ export function ActivityHeatmap() {
         >
           <ChevronLeft size={20} strokeWidth={1.75} />
         </button>
-        <span className="cal-nav__title num">{title}</span>
+        <span key={title} className="cal-nav__title heat-title num">
+          {title}
+        </span>
         <button
           type="button"
           className="cal-nav__arrow"
@@ -172,38 +178,51 @@ export function ActivityHeatmap() {
 
       <div className="chart heat-box">
         <div className="heat-scroll" ref={scrollRef} onScroll={() => setPopup(null)}>
-          <div className={yearly ? 'heat-grid heat-grid--year' : 'heat-grid'} role="group" aria-label={`Aktivitas ${title}`}>
+          {/* key per periode: grid dipasang ulang supaya animasi masuk diputar lagi */}
+          <div
+            key={`${view}-${title}`}
+            className={yearly ? 'heat-grid heat-grid--year' : 'heat-grid'}
+            role="group"
+            aria-label={`Aktivitas ${title}`}
+          >
             <span className="heat-grid__day" />
             {DAY_LABELS.map((label, i) => (
               <span key={label} className="heat-grid__day" aria-hidden>
                 {yearly && i % 2 === 1 ? '' : label}
               </span>
             ))}
-            {weeks.map((week) => [
-              <span key={`top-${week[0]}`} className="heat-grid__top num" aria-hidden>
-                {topLabel(week)}
-              </span>,
-              ...week.map((date, row) => {
-                if (date < from || date > to) return <span key={date} className="heat-cell is-blank" />;
-                if (date > today) {
-                  return <span key={date} className={yearly ? 'heat-cell is-blank' : 'heat-cell is-future'} />;
-                }
-                const count = days.get(date)?.length ?? 0;
-                const open = popup?.date === date;
-                return (
-                  <button
-                    key={date}
-                    type="button"
-                    className={open ? 'heat-cell is-open' : 'heat-cell'}
-                    data-level={levelOf(count)}
-                    aria-haspopup="dialog"
-                    aria-expanded={open}
-                    aria-label={`${formatLongDate(date)}, ${count > 0 ? `${count} latihan` : 'tidak ada latihan'}`}
-                    onClick={(e) => openDay(date, row, e)}
-                  />
-                );
-              }),
-            ])}
+            {weeks.map((week, col) => {
+              // Urutan kolom untuk jeda animasi, mengikuti arah pindah periode
+              const order = { '--col': dir === 1 ? col : weeks.length - 1 - col } as CSSProperties;
+              return [
+                <span key={`top-${week[0]}`} className="heat-grid__top num" aria-hidden>
+                  {topLabel(week)}
+                </span>,
+                ...week.map((date, row) => {
+                  if (date < from || date > to) return <span key={date} className="heat-cell is-blank" />;
+                  if (date > today) {
+                    return (
+                      <span key={date} className={yearly ? 'heat-cell is-blank' : 'heat-cell is-future'} style={order} />
+                    );
+                  }
+                  const count = days.get(date)?.length ?? 0;
+                  const open = popup?.date === date;
+                  return (
+                    <button
+                      key={date}
+                      type="button"
+                      className={open ? 'heat-cell is-open' : 'heat-cell'}
+                      data-level={levelOf(count)}
+                      style={order}
+                      aria-haspopup="dialog"
+                      aria-expanded={open}
+                      aria-label={`${formatLongDate(date)}, ${count > 0 ? `${count} latihan` : 'tidak ada latihan'}`}
+                      onClick={(e) => openDay(date, row, e)}
+                    />
+                  );
+                }),
+              ];
+            })}
           </div>
         </div>
 
@@ -221,6 +240,7 @@ export function ActivityHeatmap() {
 
       {popup && (
         <div
+          key={popup.date}
           ref={popRef}
           className={popup.above ? 'heat-pop heat-pop--above' : 'heat-pop'}
           style={{ left: popup.left, top: popup.top }}
