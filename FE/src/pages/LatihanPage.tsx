@@ -1,5 +1,5 @@
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { useNavigate } from 'react-router';
 import { AppHeader } from '../components/AppHeader';
 import { ExercisePickerSheet } from '../components/ExercisePickerSheet';
@@ -64,12 +64,24 @@ export function LatihanPage() {
           <EmptyExercises />
         ) : (
           <div className="tiles">
-            {tiles.map((e) => (
-              <button key={e.id} type="button" className="tile" onClick={() => open(e)}>
+            {tiles.map((e, i) => (
+              <button
+                key={e.id}
+                type="button"
+                className="tile"
+                style={{ '--i': i } as CSSProperties}
+                onClick={() => open(e)}
+              >
                 {e.name}
               </button>
             ))}
-            <button type="button" className="tile tile--add" aria-label="Tambah latihan" onClick={() => setPicking(true)}>
+            <button
+              type="button"
+              className="tile tile--add"
+              style={{ '--i': tiles.length } as CSSProperties}
+              aria-label="Tambah latihan"
+              onClick={() => setPicking(true)}
+            >
               <Plus size={26} strokeWidth={1.75} />
             </button>
           </div>
