@@ -1,18 +1,21 @@
 import { Plus } from 'lucide-react';
-import { useState, type CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import { useNavigate } from 'react-router';
 import { AppHeader } from '../components/AppHeader';
 import { ExercisePickerSheet } from '../components/ExercisePickerSheet';
+import { Tutorial } from '../components/Tutorial';
 import { useEndSession } from '../components/useEndSession';
 import { SegmentBars } from '../components/WeekProgress';
 import type { LocalExercise } from '../db/types';
+import { useAuth } from '../features/auth/useAuth';
 import { syncNow } from '../features/sync/engine';
 import { useSyncState } from '../features/sync/hooks';
 import { useSyncLabel } from '../features/sync/useSyncLabel';
 import { useExerciseUsage, useExercises, useWeekGroupSessions } from '../features/workout/queries';
-import { useBootReady } from '../lib/boot';
+import { useBootReady, whenBootHidden } from '../lib/boot';
 import { formatDayMonth } from '../lib/format';
 import { localDate } from '../lib/time';
+import { markTutorialShown, shouldAutoShowTutorial } from '../lib/tutorial';
 
 const TILE_COUNT = 5;
 // Isi kotak untuk pengguna baru yang belum punya riwayat (urutan sesuai canvas)
@@ -28,6 +31,23 @@ export function LatihanPage() {
   const sync = useSyncLabel();
   const endSession = useEndSession();
   const [picking, setPicking] = useState(false);
+  const userId = useAuth().user?.id;
+  const [tutorial, setTutorial] = useState(false);
+
+  // Tutorial muncul sekali tiap app dibuka (setelah layar pembuka hilang) sampai pengguna memilih
+  // "Jangan tampilkan lagi"
+  useEffect(() => {
+    if (!shouldAutoShowTutorial(userId)) return;
+    let cancelled = false;
+    void whenBootHidden().then(() => {
+      if (cancelled) return;
+      markTutorialShown();
+      setTutorial(true);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
 
   const open = (e: LocalExercise) => navigate(`/latihan/${e.id}`);
 
@@ -95,6 +115,7 @@ export function LatihanPage() {
         <ExercisePickerSheet title="Pilih latihan" allowCreate onPick={open} onClose={() => setPicking(false)} />
       )}
       {endSession.sheet}
+      {tutorial && <Tutorial onClose={() => setTutorial(false)} />}
     </>
   );
 }
