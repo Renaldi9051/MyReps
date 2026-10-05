@@ -3,6 +3,7 @@ import { ApiError } from '../api/client';
 import { AppHeader } from '../components/AppHeader';
 import { InstallSheet } from '../components/InstallSheet';
 import { useToast } from '../components/Toast';
+import { Tutorial } from '../components/Tutorial';
 import { useAuth } from '../features/auth/useAuth';
 import { useSyncState } from '../features/sync/hooks';
 import { useSyncLabel } from '../features/sync/useSyncLabel';
@@ -26,6 +27,7 @@ export function AkunPage() {
   const [theme, setTheme] = useState<ThemePref>(getThemePref);
   const install = useInstall();
   const [showSteps, setShowSteps] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const toast = useToast();
   const disconnected = status === 'offline' || status === 'unreachable';
 
@@ -117,6 +119,13 @@ export function AkunPage() {
           </div>
         )}
 
+        <div className="field tutorial-entry">
+          <span className="field__label">Cara pakai</span>
+          <button type="button" className="btn btn--secondary" onClick={() => setShowTutorial(true)}>
+            Lihat tutorial
+          </button>
+        </div>
+
         <div className="stack akun-actions">
           {error && (
             <p className="form-error" role="alert">
@@ -146,6 +155,7 @@ export function AkunPage() {
         </div>
       </main>
       {showSteps && <InstallSheet ios={install.ios} onClose={() => setShowSteps(false)} />}
+      {showTutorial && <Tutorial doneLabel="Selesai" onClose={() => setShowTutorial(false)} />}
     </>
   );
 }

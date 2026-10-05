@@ -2681,7 +2681,8 @@ button.heat-cell:active {
   height: 48px;
 }
 
-.install-icon {
+.install-icon,
+.tutorial-entry {
   margin-top: 24px;
 }
 
