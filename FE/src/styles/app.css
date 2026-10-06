@@ -191,9 +191,24 @@ p {
   text-decoration: none;
 }
 
-.nav-item.is-active {
-  border-color: var(--ink);
+.nav-item {
+  position: relative; /* di atas pil aktif */
+}
+
+/* Isian hitam tab aktif = pil di belakang tab yang meluncur (posisi dari BottomNav.tsx) */
+.bottom-nav__pill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: var(--r-lg);
   background: var(--ink);
+  pointer-events: none;
+  transition: transform 280ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+.nav-item.is-active {
+  border-color: transparent;
+  background: transparent;
   color: var(--on-ink);
 }
 
@@ -2577,6 +2592,11 @@ button.heat-cell:active {
   touch-action: pan-y pinch-zoom;
 }
 
+/* Tab yang baru aktif: ikonnya membesar sedikit saat pil tiba */
+.nav-item.is-active svg {
+  animation: nav-pop 280ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
 .sheet-backdrop {
   animation: fade-in 180ms ease-out;
 }
@@ -2652,6 +2672,12 @@ button.heat-cell:active {
 @keyframes fade-in {
   from {
     opacity: 0;
+  }
+}
+
+@keyframes nav-pop {
+  from {
+    scale: 0.8;
   }
 }
 
