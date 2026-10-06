@@ -65,6 +65,9 @@ p {
   max-width: var(--max-w);
   min-height: 100dvh;
   margin: 0 auto;
+  /* Isi yang sedang digeser ke samping tidak boleh memunculkan scroll horizontal.
+     clip (bukan hidden) supaya nav bawah tetap sticky. */
+  overflow-x: clip;
   background: var(--bg);
 }
 
@@ -2543,7 +2546,8 @@ button.heat-cell:active {
 }
 
 /* Ganti halaman berarah (data-nav dari App.tsx): tab di kanan atau halaman lebih dalam masuk
-   dari kanan, sebaliknya dari kiri. */
+   dari kanan, sebaliknya dari kiri. Setelah digeser (data-swipe) jaraknya lebih jauh supaya
+   menyambung dengan kartu yang baru keluar. */
 .screen[data-nav] .screen__body {
   animation: page-slide 260ms cubic-bezier(0.2, 0.7, 0.3, 1);
 }
@@ -2554,6 +2558,23 @@ button.heat-cell:active {
 
 .screen[data-nav='prev'] {
   --enter-x: -28px;
+}
+
+.screen[data-nav][data-swipe] .screen__body {
+  animation-duration: 300ms;
+}
+
+.screen[data-nav='next'][data-swipe] {
+  --enter-x: 36%;
+}
+
+.screen[data-nav='prev'][data-swipe] {
+  --enter-x: -36%;
+}
+
+/* Halaman tab bisa digeser kiri/kanan (useTabSwipe): scroll vertikal tetap milik browser */
+.screen[data-tabs] .screen__body {
+  touch-action: pan-y pinch-zoom;
 }
 
 .sheet-backdrop {

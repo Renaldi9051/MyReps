@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Navigate, Outlet, Route, Routes, useLocation, useMatch } from 'react-router';
 import { BottomNav } from './components/BottomNav';
+import { useTabSwipe, type SwipeNavState } from './components/useTabSwipe';
 import { useAuth } from './features/auth/useAuth';
 import { useSyncTriggers } from './features/sync/hooks';
 import { hideBoot, useBootReady } from './lib/boot';
@@ -38,13 +39,22 @@ function AppLayout() {
   // /latihan (start_url ikon) memberi sinyal sendiri setelah datanya siap; halaman lain langsung
   useBootReady(!useMatch('/latihan'));
   const location = useLocation();
+  const screenRef = useRef<HTMLDivElement>(null);
+  const swipeable = useTabSwipe(screenRef);
   // Arah ganti halaman dihitung sekali tiap path berubah (pola "sesuaikan state saat render"),
   // jadi isi halaman baru langsung masuk dari sisi yang benar (CSS data-nav)
   const [nav, setNav] = useState<{ path: string; dir: NavDir }>({ path: location.pathname, dir: 0 });
   if (nav.path !== location.pathname) setNav({ path: location.pathname, dir: navDirection(nav.path, location.pathname) });
+  const swiped = (location.state as Partial<SwipeNavState> | null)?.swipe === true;
 
   return (
-    <div className="screen" data-nav={nav.dir === 1 ? 'next' : nav.dir === -1 ? 'prev' : undefined}>
+    <div
+      ref={screenRef}
+      className="screen"
+      data-nav={nav.dir === 1 ? 'next' : nav.dir === -1 ? 'prev' : undefined}
+      data-swipe={swiped || undefined}
+      data-tabs={swipeable || undefined}
+    >
       <Outlet />
       <BottomNav />
     </div>

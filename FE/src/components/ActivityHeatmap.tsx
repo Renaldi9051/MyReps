@@ -85,6 +85,20 @@ export function ActivityHeatmap() {
     if (el) el.scrollLeft = yearly && year === thisYear ? el.scrollWidth : 0;
   }, [yearly, year, thisYear]);
 
+  // Grid yang muat di layar tidak perlu geser horizontal sendiri: serahkan ke pindah tab (useTabSwipe).
+  // Kalau lebih lebar (Setahun, atau Bulan di HP sempit), geser horizontal tetap milik heatmap.
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const update = () => {
+      el.style.touchAction = el.scrollWidth > el.clientWidth ? '' : 'pan-y pinch-zoom';
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [view, title]);
+
   // Tutup pop up saat tap di luar atau tekan Escape
   useEffect(() => {
     if (!popup) return;
