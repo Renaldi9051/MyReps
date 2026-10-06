@@ -2597,12 +2597,27 @@ button.heat-cell:active {
   animation: nav-pop 280ms cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
+/* Sheet ditutup: turun dan memudar, latar ikut memudar (Sheet.tsx menunggu 180ms) */
+.sheet-backdrop.is-closing {
+  animation: fade-out 180ms ease-in forwards;
+  pointer-events: none;
+}
+
+.sheet-backdrop.is-closing .sheet {
+  animation: sheet-out 180ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
 .sheet-backdrop {
   animation: fade-in 180ms ease-out;
 }
 
 .toast {
   animation: drop-in 220ms cubic-bezier(0.2, 0.8, 0.3, 1);
+}
+
+/* Toast habis waktu: naik dan memudar (Toast.tsx menunggu 180ms) */
+.toast.is-leaving {
+  animation: toast-out 180ms ease-in forwards;
 }
 
 /* Pilih latihan: kotak muncul berurutan (--i dari LatihanPage) */
@@ -2672,6 +2687,26 @@ button.heat-cell:active {
 @keyframes fade-in {
   from {
     opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes sheet-out {
+  to {
+    transform: translateY(48px);
+    opacity: 0;
+  }
+}
+
+@keyframes toast-out {
+  to {
+    opacity: 0;
+    translate: 0 -6px;
   }
 }
 

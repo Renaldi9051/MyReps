@@ -7,7 +7,9 @@ type ToastInput = {
   durationMs?: number;
 };
 
-type ToastState = ToastInput & { id: number };
+type ToastState = ToastInput & { id: number; leaving?: boolean };
+
+const LEAVE_MS = 180; // sama dengan animasi toast-out di app.css
 
 const ToastContext = createContext<((toast: ToastInput) => void) | null>(null);
 
@@ -21,9 +23,12 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     setToast({ ...input, id: counter.current });
   }, []);
 
+  // Habis waktu: toast naik memudar dulu, lalu dilepas
   useEffect(() => {
     if (!toast) return;
-    const id = setTimeout(() => setToast(null), toast.durationMs ?? 5000);
+    const id = toast.leaving
+      ? setTimeout(() => setToast(null), LEAVE_MS)
+      : setTimeout(() => setToast({ ...toast, leaving: true }), toast.durationMs ?? 5000);
     return () => clearTimeout(id);
   }, [toast]);
 
@@ -32,7 +37,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <div className="toast-region" aria-live="polite">
         {toast && (
-          <div className="toast" key={toast.id}>
+          <div className={toast.leaving ? 'toast is-leaving' : 'toast'} key={toast.id}>
             <span>{toast.message}</span>
             {toast.actionLabel && (
               <button
