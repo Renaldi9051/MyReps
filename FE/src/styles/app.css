@@ -2542,6 +2542,20 @@ button.heat-cell:active {
   animation: page-in 240ms cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
+/* Ganti halaman berarah (data-nav dari App.tsx): tab di kanan atau halaman lebih dalam masuk
+   dari kanan, sebaliknya dari kiri. */
+.screen[data-nav] .screen__body {
+  animation: page-slide 260ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.screen[data-nav='next'] {
+  --enter-x: 28px;
+}
+
+.screen[data-nav='prev'] {
+  --enter-x: -28px;
+}
+
 .sheet-backdrop {
   animation: fade-in 180ms ease-out;
 }
@@ -2604,6 +2618,13 @@ button.heat-cell:active {
   from {
     opacity: 0;
     translate: 0 8px;
+  }
+}
+
+@keyframes page-slide {
+  from {
+    opacity: 0;
+    translate: var(--enter-x, 0) 0;
   }
 }
 

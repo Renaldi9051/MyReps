@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, Outlet, Route, Routes, useLocation, useMatch } from 'react-router';
 import { BottomNav } from './components/BottomNav';
 import { useAuth } from './features/auth/useAuth';
 import { useSyncTriggers } from './features/sync/hooks';
 import { hideBoot, useBootReady } from './lib/boot';
+import { navDirection, type NavDir } from './lib/nav';
 import { AkunPage } from './pages/AkunPage';
 import { CatatPage } from './pages/CatatPage';
 import { KelolaLatihanPage } from './pages/KelolaLatihanPage';
@@ -36,8 +37,14 @@ function AppLayout() {
   useSyncTriggers();
   // /latihan (start_url ikon) memberi sinyal sendiri setelah datanya siap; halaman lain langsung
   useBootReady(!useMatch('/latihan'));
+  const location = useLocation();
+  // Arah ganti halaman dihitung sekali tiap path berubah (pola "sesuaikan state saat render"),
+  // jadi isi halaman baru langsung masuk dari sisi yang benar (CSS data-nav)
+  const [nav, setNav] = useState<{ path: string; dir: NavDir }>({ path: location.pathname, dir: 0 });
+  if (nav.path !== location.pathname) setNav({ path: location.pathname, dir: navDirection(nav.path, location.pathname) });
+
   return (
-    <div className="screen">
+    <div className="screen" data-nav={nav.dir === 1 ? 'next' : nav.dir === -1 ? 'prev' : undefined}>
       <Outlet />
       <BottomNav />
     </div>
