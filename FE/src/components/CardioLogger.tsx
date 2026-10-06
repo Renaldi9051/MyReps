@@ -111,16 +111,19 @@ export function CardioLogger({ exercise }: { exercise: LocalExercise }) {
             >
               −1<small>mnt</small>
             </button>
-            <button
-              type="button"
-              className="round round--plus round--start"
-              onClick={() => {
-                stopwatch.toggle();
-                haptic(10);
-              }}
-            >
-              {stopwatch.running ? 'Stop' : 'Mulai'}
-            </button>
+            {/* Selama stopwatch jalan, riak lime pelan keluar dari belakang tombol Stop */}
+            <span className={stopwatch.running ? 'plus-wrap is-running' : 'plus-wrap'}>
+              <button
+                type="button"
+                className="round round--plus round--start"
+                onClick={() => {
+                  stopwatch.toggle();
+                  haptic(10);
+                }}
+              >
+                {stopwatch.running ? 'Stop' : 'Mulai'}
+              </button>
+            </span>
             <button
               type="button"
               className="round round--minus round--time"

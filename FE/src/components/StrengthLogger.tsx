@@ -50,6 +50,9 @@ export function StrengthLogger({ exercise }: { exercise: LocalExercise }) {
   const [confirming, setConfirming] = useState<SetValues | null>(null);
   const [editingExercise, setEditingExercise] = useState(false);
   const setCount = useExerciseSetCount(exercise.id) ?? 0;
+  // Animasi: arah perubahan rep terakhir dan jumlah tap +1 (key riak dan denyut cincin)
+  const [repDir, setRepDir] = useState<1 | -1 | 0>(0);
+  const [plusTaps, setPlusTaps] = useState(0);
 
   useWakeLock(true);
 
@@ -74,6 +77,7 @@ export function StrengthLogger({ exercise }: { exercise: LocalExercise }) {
     toast({ message: `Set ${setNumber} tersimpan · ${formatSet(set)}`, durationMs: 3000 });
     // Beban tetap sama untuk set berikutnya
     setDraft({ reps: 0, weight: values.weight_kg, perHand: values.per_hand });
+    setRepDir(-1);
   };
 
   return (
@@ -95,7 +99,9 @@ export function StrengthLogger({ exercise }: { exercise: LocalExercise }) {
 
         <div className="counter__ring-area">
           <div className="ring" aria-live="polite" aria-label={`${reps} rep`}>
-            <span key={reps} className="ring__value">
+            {/* Denyut cincin tiap +1 */}
+            {plusTaps > 0 && <span key={`beat-${plusTaps}`} className="ring__beat" aria-hidden />}
+            <span key={reps} className={repDir === 0 ? 'ring__value' : repDir === 1 ? 'ring__value is-up' : 'ring__value is-down'}>
               {reps}
             </span>
             <span className="ring__label">rep</span>
@@ -111,22 +117,29 @@ export function StrengthLogger({ exercise }: { exercise: LocalExercise }) {
               disabled={reps === 0}
               onClick={() => {
                 setReps((r) => Math.max(0, r - 1));
+                setRepDir(-1);
                 haptic(10);
               }}
             >
               −1
             </button>
-            <button
-              type="button"
-              className="round round--plus"
-              aria-label="Tambah 1 rep"
-              onClick={() => {
-                setReps((r) => r + 1);
-                haptic(10);
-              }}
-            >
-              +1
-            </button>
+            {/* Riak lime keluar dari belakang tombol tiap tap */}
+            <span className="plus-wrap">
+              {plusTaps > 0 && <span key={plusTaps} className="round__ripple" aria-hidden />}
+              <button
+                type="button"
+                className="round round--plus"
+                aria-label="Tambah 1 rep"
+                onClick={() => {
+                  setReps((r) => r + 1);
+                  setRepDir(1);
+                  setPlusTaps((n) => n + 1);
+                  haptic(10);
+                }}
+              >
+                +1
+              </button>
+            </span>
             <button
               type="button"
               className="round round--minus round--time round--hand"

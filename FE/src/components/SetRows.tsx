@@ -30,7 +30,8 @@ export function SetRows({ sets, running }: Props) {
         </div>
       ))}
       <div className="set-row set-row--running" aria-label={`Set ${sets.length + 1} sedang berjalan`}>
-        <span>
+        {/* key = isi: teks berganti dengan kedip kecil tiap rep/beban berubah */}
+        <span key={running} className="set-row__live">
           <b>Set {sets.length + 1}</b> · {running}
         </span>
       </div>

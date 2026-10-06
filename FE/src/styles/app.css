@@ -2655,6 +2655,125 @@ button.heat-cell:active {
   animation: rep-pop 180ms cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
+/* +1: angka baru naik dari bawah; −1 dan setelah simpan: turun dari atas */
+.ring__value.is-up {
+  animation: rep-up 220ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.ring__value.is-down {
+  animation: rep-down 220ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* Layar penghitung dibuka: cincin membesar masuk, kontrol di bawahnya naik berurutan */
+.counter .ring {
+  animation: pop-in 320ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+}
+
+.counter__controls > * {
+  animation: rise-in 280ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
+}
+
+.counter__controls > :nth-child(2) {
+  animation-delay: 40ms;
+}
+
+.counter__controls > :nth-child(3) {
+  animation-delay: 80ms;
+}
+
+.counter__controls > :nth-child(4) {
+  animation-delay: 120ms;
+}
+
+.counter__controls > :nth-child(5) {
+  animation-delay: 160ms;
+}
+
+/* Tiap +1: garis cincin berdenyut keluar (span dipasang ulang lewat key) */
+.ring {
+  position: relative;
+}
+
+.ring__beat {
+  position: absolute;
+  inset: calc(-1 * var(--bw));
+  border: var(--bw) solid var(--ink);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: ring-beat 420ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+/* Tombol +1 / Mulai: riak lime di belakang tombol (pembungkus seukuran tombol),
+   jadi isi dan garis tepi tombol selalu tergambar di atasnya */
+.plus-wrap {
+  position: relative;
+  display: grid;
+  flex-shrink: 0;
+}
+
+.plus-wrap > .round {
+  position: relative;
+  z-index: 1;
+}
+
+.round__ripple,
+.plus-wrap.is-running::after {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+}
+
+.round__ripple {
+  animation: ripple 460ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+/* Kardio: selama stopwatch jalan, tombol Stop terus memancarkan riak pelan */
+.plus-wrap.is-running::after {
+  content: '';
+  animation: ripple 1600ms cubic-bezier(0.2, 0.7, 0.3, 1) infinite;
+}
+
+/* Pisah beban dinyalakan: tombol meletup kecil */
+.round--hand[aria-pressed='true'] {
+  animation: toggle-pop 240ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* Stepper: nilai baru naik dari bawah saat +, turun dari atas saat − (key = nilai) */
+.stepper__value {
+  display: inline-block;
+}
+
+.stepper__value.is-up {
+  animation: value-up 160ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.stepper__value.is-down {
+  animation: value-down 160ms cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+/* Baris set berjalan: isi berkedip kecil tiap rep/beban berubah (key = isi) */
+.set-row__live {
+  animation: live-tick 200ms ease-out;
+}
+
+/* Set baru tersimpan: tanda centang muncul setelah barisnya masuk */
+.set-rows .set-row:not(.set-row--running) svg {
+  animation: check-pop 320ms cubic-bezier(0.2, 0.7, 0.3, 1) 120ms backwards;
+}
+
+/* Tombol utama yang baru aktif (mis. Simpan set setelah +1 pertama) menebal pelan, tidak langsung */
+.btn {
+  transition:
+    transform 80ms ease-out,
+    background-color 180ms ease-out,
+    border-color 180ms ease-out,
+    color 180ms ease-out,
+    opacity 220ms ease-out;
+}
+
 /* Set yang baru disimpan masuk dari bawah */
 .set-rows .set-row:not(.set-row--running) {
   animation: rise-in 220ms cubic-bezier(0.2, 0.7, 0.3, 1);
@@ -2753,6 +2872,80 @@ button.heat-cell:active {
 @keyframes rep-pop {
   from {
     scale: 1.12;
+  }
+}
+
+@keyframes rep-up {
+  from {
+    opacity: 0.3;
+    translate: 0 16%;
+    scale: 1.1;
+  }
+}
+
+@keyframes rep-down {
+  from {
+    opacity: 0.3;
+    translate: 0 -16%;
+    scale: 0.94;
+  }
+}
+
+@keyframes ring-beat {
+  from {
+    opacity: 0.6;
+    scale: 1;
+  }
+
+  to {
+    opacity: 0;
+    scale: 1.14;
+  }
+}
+
+@keyframes ripple {
+  from {
+    opacity: 0.7;
+    scale: 1;
+  }
+
+  to {
+    opacity: 0;
+    scale: 1.45;
+  }
+}
+
+@keyframes toggle-pop {
+  from {
+    scale: 0.88;
+  }
+}
+
+@keyframes value-up {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+@keyframes value-down {
+  from {
+    opacity: 0;
+    translate: 0 -8px;
+  }
+}
+
+@keyframes live-tick {
+  from {
+    opacity: 0.4;
+    translate: 3px 0;
+  }
+}
+
+@keyframes check-pop {
+  from {
+    opacity: 0;
+    scale: 0.4;
   }
 }
 
